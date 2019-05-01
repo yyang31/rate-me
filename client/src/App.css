@@ -1,0 +1,81 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #282c34;
+  background-image: url(/img/dark-sky-background.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.App {
+  text-align: center;
+  max-width: 768px;
+  margin: auto;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-body {
+  display: inline-block;
+}
+
+.App-header, .App-footer {
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background-color: #282c34;
+  min-height: 100px;
+  max-height: 100px;
+  flex-direction: column;
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.App-header {
+  display: flex;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.7);
+}
+
+.App-footer {
+  display: block;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.7);
+}
+
+.footer-text {
+  max-width: 35px;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  transition: 0.5s ease-in-out;
+}
+
+.App-footer:hover .footer-text{
+  transition: 1.25s;
+  max-width: 1000px;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,1 @@
+CREATE TABLE shows(id int auto_increment, title varchar(255), filename varchar(255), descrip text, one int, two int, three int, four int, five int, primary key(id));
