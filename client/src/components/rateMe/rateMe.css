@@ -44,6 +44,7 @@
 
 .show-img-cont:focus .rating-detail{
     opacity: 1;
+    cursor: default;
 }
 
 .show-img{
