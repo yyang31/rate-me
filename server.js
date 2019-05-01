@@ -68,6 +68,7 @@ app.get('/api/rate', (req, res) => {
     let sql = `UPDATE shows SET ${ratingTarget} = ${ratingTarget} + 1 WHERE id = ${req.query.id}`;
     let query = db.query(sql, (err, results) => {
         if(err) throw err;
+        res.json(results);
     })
 })
 
@@ -79,6 +80,7 @@ app.get('/api/newShow', (req, res) => {
                 Values ('${req.query.title}', '${req.query.description}', 0, 0, 0, 0, 0)`;
     let query = db.query(sql, (err, results) => {
         if(err) throw err;
+        res.json(results);
     })
 })
 
