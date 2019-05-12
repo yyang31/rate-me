@@ -7,7 +7,7 @@ const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
-// Create connection
+// setting up connection
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -15,7 +15,7 @@ const db = mysql.createConnection({
     database: 'rate_me'
 });
 
-// Connect
+// Connect to the database
 db.connect((err) => {
     if (err) {
         throw err;
@@ -35,7 +35,10 @@ app.use(bodyParser.json())
  * select and return all shows
  */
 app.get('/api/shows', (req, res) => {
-    let sql = 'SELECT * FROM shows';
+    let showType = req.query.showType;
+    let whereClause = `WHERE showtype = '${req.query.showType}'`;
+    let orderByClause = `ORDER BY title ${req.query.showOrder}`;
+    let sql = `SELECT * FROM shows ${showType === "all"? "" : whereClause} ${orderByClause}`;
     let query = db.query(sql, (err, results) => {
         if (err) throw err;
         res.json(results);
@@ -76,8 +79,8 @@ app.get('/api/rate', (req, res) => {
  * adding a new show
  */
 app.get('/api/newShow', (req, res) => {
-    let sql = `INSERT INTO shows (title, descrip, one, two, three, four, five)
-                Values ('${req.query.title}', '${req.query.description}', 0, 0, 0, 0, 0)`;
+    let sql = `INSERT INTO shows (title, descrip, showtype, one, two, three, four, five)
+                Values ('${req.query.title}', '${req.query.description}', '${req.query.showType}', 0, 0, 0, 0, 0)`;
     let query = db.query(sql, (err, results) => {
         if(err) throw err;
         res.json(results);

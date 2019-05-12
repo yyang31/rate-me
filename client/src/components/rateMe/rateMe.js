@@ -1,29 +1,43 @@
+/**
+ * Author: Youwei Yang
+ * Description: The component for rate-me site, where the user can add, rate, and
+ *              view the rating for anime series and movies
+ */
 import React, { Component } from 'react';
 import './rateMe.css'
 const baseShowImgUrl = "/show_img/"
 
+/**
+ * Component for adding new show
+ */
 class AddShow extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             title: "",
             description: "",
+            showType: "series",
             show: false
         };
     }
 
+    /**
+     * show or hide the modal
+     */
     modalTrigger() {
         let show = this.state.show ? false : true;
-
         this.setState({
             show: show
         });
     }
 
+    /**
+     * submit the new show to be added to the database
+     */
     formOnSubmit(event) {
         event.preventDefault();   // prevent default form submit action
 
-        fetch(`/api/newShow?title=${this.state.title}&description=${this.state.description}`)
+        fetch(`/api/newShow?title=${this.state.title}&description=${this.state.description}&showType=${this.state.showType}`)
 
         this.setState({
             title: "",
@@ -34,26 +48,61 @@ class AddShow extends React.Component {
         this.props.componentDidMount();
     }
 
+    /**
+     * handles the on change for title text input
+     */
     titleOnChange(event) {
         this.setState({ title: event.target.value });
     }
 
+    /**
+     * handles the on change for the description text area
+     */
     descripOnChange(event) {
         this.setState({ description: event.target.value });
     }
 
+    /**
+     * handles on click for show type toggle
+     */
+    changeShowType() {
+        let showType = this.state.showType === "series" ? "movie" : "series";
+
+        this.setState({
+            showType: showType
+        })
+    }
+
+    /**
+     * render the add show component
+     */
     render() {
         let modalClasses = `modal ${this.state.show ? "show" : ""}`;
+        let toggleCircleClasses = "toggle-circle";
+        let seriesTextClasses;
+        let movieTextClasses;
+        if (this.state.showType === "series") {
+            seriesTextClasses = "active";
+        } else {
+            toggleCircleClasses += " right";
+            movieTextClasses = "active";
+        }
 
         return (
-            < div className="App-footer">
-                <div className="footer-text" onClick={() => this.modalTrigger()}>+ Add More Shows</div>
+            < div className="show-cont">
+                <div className="add-show-text" onClick={() => this.modalTrigger()}>+</div>
                 <div className={modalClasses}>
-                    <div className="modal-background" onClick={() => this.modalTrigger()}></div>
                     <form onSubmit={(e) => this.formOnSubmit(e)} className="modal-form">
                         <div className="modal-close" onClick={() => this.modalTrigger()}>X</div>
                         <div>Title:<input type="text" onChange={(e) => this.titleOnChange(e)} required></input></div>
                         <div>Description:<textarea onChange={(e) => this.descripOnChange(e)} required></textarea></div>
+                        <div className="toggle-cont">
+                            <span className={seriesTextClasses}>series</span>
+                            <div className="toggle">
+                                <div className={toggleCircleClasses} onClick={() => this.changeShowType()}></div>
+                            </div>
+                            <span className={movieTextClasses}>movie</span>
+                        </div>
                         <input type="submit" value="Submit"></input>
                     </form>
                 </div>
@@ -62,70 +111,52 @@ class AddShow extends React.Component {
     };
 }
 
+/**
+ * Componet for showing more detai ratings
+ */
 class RatingDetail extends React.Component {
+    /**
+     * render the rating detail component
+     */
     render() {
         let show = this.props.show;
-        let one = show.one;
-        let two = show.two;
-        let three = show.three;
-        let four = show.four;
-        let five = show.five;
+        let votes = [show.one, show.two, show.three, show.four, show.five];
+        let numRating = 0;
+        let textCount = 1;
+        const starDetail = [];
+        for (var i in votes) {
+            numRating += votes[i];
+        }
 
-        let numRating = one + two + three + four + five;
+        for (var j in votes) {
+            starDetail.push(
+                <div key={textCount}>
+                    <div className="star-detail-icon">
+                        <div className="rating-star star-full"></div>
+                        <div className="star-detail-icon-text">{textCount}</div>
+                        <div className="star-detail-bar" style={{ width: (72 * votes[j] / numRating) + '%' }}></div>
+                        <div className="star-detail-bar-num">{votes[j] + ` vote${votes[j] > 1? "s" : ""}`}</div>
+                    </div>
+                </div>
+            );
+            textCount++;
+        }
 
         return (
             <div className="rating-detail">
-                <div>
-                    <div className="star-detail-icon">
-                        <div className="rating-star star-full"></div>
-                        <div className="star-detail-icon-text">5</div>
-                        <div className="star-detail-bar" style={{ width: 72 * five / numRating + '%' }}>
-                            <div className="star-detail-bar-num">{Math.round(100 * five / numRating * 100)/100 + '%'}</div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div className="star-detail-icon">
-                        <div className="rating-star star-full"></div>
-                        <div className="star-detail-icon-text">4</div>
-                        <div className="star-detail-bar" style={{ width: 72 * four / numRating + '%' }}>
-                            <div className="star-detail-bar-num">{Math.round(100 * four / numRating * 100)/100 + '%'}</div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div className="star-detail-icon">
-                        <div className="rating-star star-full"></div>
-                        <div className="star-detail-icon-text">3</div>
-                        <div className="star-detail-bar" style={{ width: 72 * three / numRating + '%' }}>
-                            <div className="star-detail-bar-num">{Math.round(100 * three / numRating * 100)/100 + '%'}</div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div className="star-detail-icon">
-                        <div className="rating-star star-full"></div>
-                        <div className="star-detail-icon-text">2</div>
-                        <div className="star-detail-bar" style={{ width: 72 * two / numRating + '%' }}>
-                            <div className="star-detail-bar-num">{Math.round(100 * two / numRating * 100)/100 + '%'}</div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div className="star-detail-icon">
-                        <div className="rating-star star-full"></div>
-                        <div className="star-detail-icon-text">1</div>
-                        <div className="star-detail-bar" style={{ width: 72 * one / numRating + '%' }}>
-                            <div className="star-detail-bar-num">{Math.round(100 * one / numRating * 100)/100 + '%'}</div>
-                        </div>
-                    </div>
-                </div>
+                {starDetail}
             </div>
         );
     }
 }
 
+/**
+ * Component for rating a show
+ */
 class Rating extends React.Component {
+    /**
+     * render the rating component
+     */
     render() {
         const stars = [];
         var wholeRating = Math.floor(this.props.rating);
@@ -189,22 +220,47 @@ class Rating extends React.Component {
     };
 }
 
+/**
+ * Component for the rate-me web app
+ */
 class RateMe extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            showOrder: "ASC",
+            showType: "all",
             shows: []
         };
     }
 
+    /**
+     * fetch the shows from the database when component mounted
+     */
     componentDidMount() {
-        fetch('/api/shows')
+        fetch(`/api/shows?showType=${this.state.showType}&showOrder=${this.state.showOrder}`)
             .then(res => res.json())
             .then(shows => this.setState(
                 { shows }
             ));
     }
 
+    /**
+     * fetch the shows from the database when component was updated
+     */
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.shows !== this.state.shows) {
+            fetch(`/api/shows?showType=${this.state.showType}&showOrder=${this.state.showOrder}`)
+                .then(res => res.json())
+                .then(shows => this.setState(
+                    { shows }
+                ));
+        }
+    }
+
+    /**
+     * calculate the rating of a show
+     * @param {*} show the show object which to be calculated
+     */
     calcRating(show) {
         let one = show.one;
         let two = show.two;
@@ -222,17 +278,68 @@ class RateMe extends React.Component {
         }
     }
 
+    /**
+     * handles the on click on the star icons when rating a show
+     */
     rateShow(e) {
         let show = JSON.parse(e.currentTarget.getAttribute("data-show"));
 
         fetch(`/api/rate?id=${show.id}&rating=${show.rating}`);
-
-        this.componentDidMount();
     }
 
+    /**
+     * handles the on click for show order filter
+     */
+    changeShowOrder() {
+        let showOrder = this.state.showOrder === "ASC" ? "DESC" : "ASC";
+
+        this.setState({
+            showOrder: showOrder
+        })
+    }
+
+    /**
+     * handles the on click for show type filter
+     */
+    selectType(type) {
+        this.setState({
+            showType: type
+        });
+    }
+
+    /**
+     * render the rateMe component
+     */
     render() {
+        let showType = this.state.showType;
+        let toggleCircleClasses = "toggle-circle";
+        let ascTextClasses;
+        let descTextClasses;
+        if (this.state.showOrder === "ASC") {
+            ascTextClasses = "active";
+        } else {
+            toggleCircleClasses += " right";
+            descTextClasses = "active";
+        }
+
         return (
             <div>
+                <div className="App-header">
+                    <div className="toggle-cont">
+                        <span className={ascTextClasses}>ASC</span>
+                        <div className="toggle">
+                            <div className={toggleCircleClasses} onClick={() => this.changeShowOrder()}></div>
+                        </div>
+                        <span className={descTextClasses}>DESC</span>
+                    </div>
+                    <ul className="type-filter-cont">
+                        <li className="selected">{showType}</li>
+                        <li onClick={() => this.selectType("series")}>series</li>
+                        <li onClick={() => this.selectType("movie")}>movie</li>
+                        <li onClick={() => this.selectType("all")}>all</li>
+                    </ul>
+                </div>
+
                 <div className="App-body">
                     {
                         this.state.shows.map(show =>
@@ -249,11 +356,10 @@ class RateMe extends React.Component {
                             </div>
                         )
                     }
+
+                    <AddShow componentDidMount={() => this.componentDidMount()} />
                 </div>
-
-                <AddShow componentDidMount={() => this.componentDidMount()} />
             </div>
-
         );
     };
 }
